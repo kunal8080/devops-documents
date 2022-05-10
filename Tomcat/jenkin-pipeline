@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    stages {
+        stage('git-clone') {
+            steps {
+              git 'https://github.com/kunal8080/hello-world.git'           
+                
+            }
+        }
+
+        stage('build') {
+            steps {
+                
+                sh "mvn install"      
+                
+            }
+        }
+    
+         stage('deploy') {
+            steps {
+                
+           sshagent(['deploy']) {
+              // some block
+              }
+                sh "sudo touch file1"
+                sh " sudo scp  -o StrictHostKeyChecking=no /root/.jenkins/workspace/test-01/webapp/target/webapp.war root@172.31.41.159:/tomcat/apache-tomcat-9.0.62/webapps/webapp.war"
+                
+            }
+        }
+
+
+  }
+}
