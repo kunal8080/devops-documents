@@ -1,0 +1,47 @@
+pipeline {
+    agent{
+        node{
+            label 'built-in'
+        }
+    }
+    stages {
+        stage('git-clone') {
+            steps {
+              git 'https://github.com/kunal8080/hello-world.git'           
+                
+            }
+        }
+
+        stage('build') {
+            steps {
+                
+                sh "mvn install"      
+                
+            }
+        }
+    
+         stage('deploy') {
+            steps {
+                
+           sshagent(['test-01']) {
+       // some block
+        }
+                sh "sudo touch file1"
+                sh " sudo scp  -o StrictHostKeyChecking=no /root/.jenkins/workspace/test-01/webapp/target/webapp.war root@172.31.39.163:/tomcat/apache-tomcat-9.0.62/webapps/webapp.war"
+                
+            }
+        }
+       
+        stage('deploy-2') {
+            steps {
+                
+             sshagent(['test-02']) {
+              // some block
+            }
+                sh "sudo touch file1"
+                sh " sudo scp  -o StrictHostKeyChecking=no /root/.jenkins/workspace/test-01/webapp/target/webapp.war root@172.31.34.227:/tomcat/apache-tomcat-9.0.62/webapps/webapp.war"
+                
+            }
+        }
+    }
+}
